@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from urllib.parse import quote
 
 from aiohttp import ClientResponseError, ClientSession
 
@@ -53,20 +54,52 @@ class IcoteraApiClient:
             async with self._session.post(
                 self._url, data=initial_payload, headers=headers, timeout=10
             ) as response:
+                _LOGGER.debug(
+                    "Initial request sent: %s\nHeaders: %s\nResponse: %s",
+                    initial_payload,
+                    response.request_info.headers,
+                    response.headers,
+                )
                 response.raise_for_status()
 
             # login
             login_payload = (
-                f"curpg=null&req=log_in&username={self._username}&password={self._password}&"
+                f"curpg=null&req=log_in&username={quote(self._username)}&password={quote(self._password)}&"
             )
             async with self._session.post(
                 self._url, data=login_payload, headers=headers, timeout=10
             ) as response:
+                if _LOGGER.isEnabledFor(logging.DEBUG):
+                    _LOGGER.debug(
+                        "Login request sent: username=%s\nHeaders: %s\nResponse: %s\nCookies: %s",
+                        self._username,
+                        response.request_info.headers,
+                        response.headers,
+                        self._session.cookie_jar.filter_cookies(self._url),
+                    )
                 response.raise_for_status()
                 content_type = response.headers.get("Content-Type", "")
                 if "text/html" in content_type:
                     _LOGGER.error("Login failed: Received HTML response")
                     raise IcoteraAuthError("Invalid credentials or session error")
+                
+                if _LOGGER.isEnabledFor(logging.DEBUG):
+                    _LOGGER.debug("Login response body: %s", await response.text())
+                
+                # Verify JSON response has login_result and status 1
+                try:
+                    data = await response.json()
+                    resp_t = data.get("resp_t")
+                    status = data.get("resp_body", {}).get("status")
+                    
+                    if resp_t != "login_result" or status != "1":
+                        _LOGGER.error("Login failed: Unexpected response structure or status (%s, %s)", resp_t, status)
+                        raise IcoteraAuthError(f"Login failed: {resp_t} status {status}")
+                except Exception as err:
+                    if isinstance(err, IcoteraAuthError):
+                        raise
+                    _LOGGER.error("Error parsing login response: %s", err)
+                    raise IcoteraAuthError("Invalid JSON in login response") from err
 
             self._is_logged_in = True
         except ClientResponseError as err:
@@ -96,8 +129,16 @@ class IcoteraApiClient:
 
         try:
             async with self._session.post(
-                self._url, data=devices_payload, headers=headers, timeout=10
+                self._url, data=devices_payload, headers=headers, timeout=30
             ) as response:
+                if _LOGGER.isEnabledFor(logging.DEBUG):
+                    _LOGGER.debug(
+                        "Device fetch request sent: %s\nHeaders: %s\nResponse: %s\nCookies: %s",
+                        devices_payload,
+                        response.request_info.headers,
+                        response.headers,
+                        self._session.cookie_jar.filter_cookies(self._url),
+                    )
                 response.raise_for_status()
                 content_type = response.headers.get("Content-Type", "")
                 if "text/html" in content_type:
@@ -106,6 +147,7 @@ class IcoteraApiClient:
                     return await self.get_connected_devices()
 
                 data = await response.json()
+                _LOGGER.debug("Device fetch response: %s", data)
                 return self._parse_devices(data)
         except ClientResponseError as err:
             _LOGGER.error("HTTP error fetching devices: %s", err)
@@ -120,6 +162,7 @@ class IcoteraApiClient:
         """Parse the router's device response."""
         devices_dict: dict[str, dict[str, Any]] = {}
         info_array = data.get("resp_body", {}).get("info_array", [])
+        
         for bridge in info_array:
             for port_group in bridge.get("devices", []):
                 port_name = port_group.get("port")
@@ -133,4 +176,5 @@ class IcoteraApiClient:
                             "port": port_name,
                             "dhcp": device.get("dhcp"),
                         }
+        
         return devices_dict

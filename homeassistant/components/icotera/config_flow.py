@@ -7,11 +7,13 @@ from typing import Any
 
 import voluptuous as vol
 
+import aiohttp
+
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import IcoteraApiClient, IcoteraAuthError, IcoteraConnectionError
 from .const import DOMAIN
@@ -30,7 +32,9 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate that the user input allows us to connect to the router.
     """
-    session = async_get_clientsession(hass)
+    session = async_create_clientsession(
+        hass, cookie_jar=aiohttp.CookieJar(unsafe=True)
+    )
     api = IcoteraApiClient(
         data[CONF_HOST], data[CONF_USERNAME], data[CONF_PASSWORD], session
     )

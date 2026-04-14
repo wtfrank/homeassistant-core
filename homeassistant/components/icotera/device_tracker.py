@@ -40,6 +40,8 @@ class IcoteraDeviceTracker(
 ):
     """Representation of an Icotera device."""
 
+    _attr_entity_category = None
+
     def __init__(self, coordinator: IcoteraDataUpdateCoordinator, mac: str) -> None:
         """Initialize."""
         super().__init__(coordinator)
@@ -74,3 +76,12 @@ class IcoteraDeviceTracker(
         if device := self.coordinator.data.get(self._mac):
             return device.get("ipv4_address")
         return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str | None]:
+        """Return the state attributes."""
+        if device := self.coordinator.data.get(self._mac):
+            return {
+                "port": device.get("port"),
+            }
+        return {}

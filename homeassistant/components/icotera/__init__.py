@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import aiohttp
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import IcoteraApiClient
 from .coordinator import IcoteraDataUpdateCoordinator
@@ -17,7 +19,9 @@ type IcoteraConfigEntry = ConfigEntry[IcoteraDataUpdateCoordinator]
 
 async def async_setup_entry(hass: HomeAssistant, entry: IcoteraConfigEntry) -> bool:
     """Set up Icotera from a config entry."""
-    session = async_get_clientsession(hass)
+    session = async_create_clientsession(
+        hass, cookie_jar=aiohttp.CookieJar(unsafe=True)
+    )
     api = IcoteraApiClient(
         entry.data[CONF_HOST],
         entry.data[CONF_USERNAME],
