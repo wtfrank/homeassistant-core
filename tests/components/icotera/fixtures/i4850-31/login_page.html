@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>Administrative Console</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<script type="text/javascript" src="login_page_files/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="login_page_files/SimpleAjaxUploader.min.js"></script>
+<script type="text/javascript" src="login_page_files/download.min.js"></script>
+<script type="text/javascript" src="login_page_files/ict_webui.js"></script>
+
+<link rel="stylesheet" type="text/css" href="login_page_files/ict_webui.css"> 
+<link rel="shortcut icon" href="https://172.16.4.1/images/favicon.ico" type="image/x-icon">
+
+</head>
+
+<body>
+
+	<div id="container" class="C_CSS_container">
+		<div id="header" class="C_CSS_header">
+			<table style="height: inherit;" width="100%">
+			<tbody>
+				<tr class="C_CSS_global">
+					<td rowspan="2" class="white1 C_CSS_colorClass_BGK_DOCUMENT"><img src="login_page_files/logo.png" alt="logo"></td>
+					<td rowspan="2" class="green1 C_CSS_colorClass_BGK_LOGO_MAIN1"></td>
+					<td rowspan="2" class="green2 C_CSS_colorClass_BGK_LOGO_MAIN2"></td>
+					<td rowspan="2" class="green3 C_CSS_colorClass_BGK_LOGO_MAIN3 C_CSS_colorClass_TXT_LOGO">
+						<div class="i4pn">
+							<a id="global_header_devname">i4850-31</a>
+						</div>
+						<div class="i4type" id="global_header_devname_gateway">Ethernet Router</div>
+					</td>
+					<td class="green4 C_CSS_colorClass_BGK_LOGO_MAIN4 topbtn">
+						<select id="select_lang_index"><option text="English" value="0" id="opt0" selected="selected">English</option><option text="Deutsch" value="1" id="opt1">Deutsch</option><option text="Français" value="2" id="opt2">Français</option></select> 
+					</td>
+				</tr>
+				<tr>
+					<td class="green4 C_CSS_colorClass_BGK_LOGO_MAIN4 btmbtn">
+						<input class="C_CSS_flatbtn" id="btn_logout" type="button" value="Log out" disabled="disabled">
+					</td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+		
+		<div id="LoadingDiv" class="C_CSS_LoadingDiv" style="display: none;" data-timeout_set="already_set">
+			<p style="position: absolute; top: 50%; left: 45%;" align="center">
+				<strong id="LoadingDivMsg"> </strong>
+				<br>
+				<img src="login_page_files/ajax-loader.gif" alt="Please wait..." id="loading_image">
+			</p>
+		</div>
+	
+		<div id="content" style="overflow: hidden; visibility: hidden;" class="C_CSS_content">	
+			<div id="content_tree" class="C_CSS_content_tree">
+			</div>
+			<div class="C_CSS_content_column">
+				<div id="content_content_wrapper" class="C_CSS_content_content_wrapper">
+				<form id="content_form" action="index.cgi" method="POST"><input type="hidden" name="submitType" id="submitType" value="none"><div id="content_content" class="C_CSS_content_content"></div></form></div>
+				<div id="mainmenu" class="C_CSS_mainmenu C_CSS_colorClass_BORDER_COLOR2">
+					<div class="C_CSS_mainmenuitem" style="padding-left:0px;">
+						<input class="C_CSS_flatbtn" id="btn_reset" type="button" value="Reset" disabled="disabled">
+						<input class="C_CSS_flatbtn" id="btn_save" type="button" value="Save" disabled="disabled">
+						<input class="C_CSS_flatbtn" id="btn_apply" type="button" value="Apply" disabled="disabled">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="content_overlay" class="C_CSS_content_overlay" style="display: block; margin-left: -170px;">
+		<form id="content_overlay_form" action="index.cgi" method="POST"><div id="content_overlay_panel" class="C_CSS_PanelContainer"><div id="content_overlay_header" class="C_CSS_PanelContainerHeader"><b>i4850-31 Login</b></div><div id="content_overlay_content" class="C_CSS_PanelContainerContent"><table class="C_CTL_layoutTabContainer C_CTL_layout_container C_CTL_layoutOpt_autosizeW" style="margin-left:auto; margin-right:auto;"><tr class="layout_row1"><td class="C_CTL_layout_r1c_c" colspan="2"><p align="center" style="font-size: 0.8em; font-weight: normal; padding: 0.5em;">Please input your username and password:</p></td></tr><tr class="layout_row1"><td class="C_CTL_layout_r1c_c" colspan="2"><table class="C_CTL_layoutTabContainer C_CTL_layout_container C_CTL_layoutOpt_autosizeW" style="margin-left:auto; margin-right:auto;"><tr class="layout_row1"><td style="width:40%; text-align:right; padding-right:10px; padding:8px;"><p align="right" style="padding-left: 1.2em; font-weight: bold; font-size: 0.9em;">Username:</p></td><td><input id="userID" name="username" type="text" class="fields"></td></tr><tr class="layout_row1"><td style="width:40%;text-align:right; padding-right:10px; padding:8px;"><p align="right" style="padding-left: 1.2em; font-weight: bold; font-size: 0.9em;">Password:</p></td><td><input name="password" type="password" class="fields"></td></tr></table></td></tr><tr class="layout_row1"><td class="C_CTL_layout_r1c_c" colspan="2"><div id="overlay_error_placeholder" class="C_CSS_ErrorBox" style="display:none;"></div></td></tr><tr class="layout_row1"><td class="C_CTL_layout_r1c_c" colspan="2"><p align="center" style="font-size: 0.8em; font-weight: normal; padding: 0.5em;"><input type="button" class="C_CSS_flatbtn" value="Log in">&nbsp;<input type="button" class="C_CSS_flatbtn" value="Clear"></p></td></tr></table></div></div></form></div>
+		
+	</div>
+
+
+</body></html>

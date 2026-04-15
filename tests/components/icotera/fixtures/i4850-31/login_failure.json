@@ -1,0 +1,18 @@
+{ 
+ "timestamp" : "1776237255",
+ "magic" : "4000",
+ "mode" : "web10",
+ "trlock" : "0",
+ "block" : "0",
+ "curpg" : "null",
+ "logged" : "0",
+ "changes" : "0",
+ "dbsync" : "1",
+ "authtype" : "0",
+ "idx_lang" : "0",
+"resp_t":"login_result",
+ "resp_body":{
+ "status" : "0",
+ "first_login" : "0",
+"EoO" : "0" },"EoO" : "0" }
+

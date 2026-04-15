@@ -1,0 +1,52 @@
+{ 
+ "timestamp" : "1776237308",
+ "magic" : "4000",
+ "mode" : "web10",
+ "trlock" : "0",
+ "block" : "0",
+ "curpg" : "status.connecteddevices",
+ "logged" : "1",
+ "changes" : "0",
+ "dbsync" : "1",
+ "authtype" : "1",
+ "idx_lang" : "0",
+"resp_t":"ConnectedDevices_getDevice_all_resp",
+ "resp_body":{
+"info_array":[
+{
+"bridge_name":"br1","bridge_idx":1,"devices":[
+{
+"port":"LAN 1","device_list":[
+{
+"mac_addr":"aa:bb:cc:dd:ee:01","ipv4_addr":"192.168.1.112","hostname":"Cerulean","dhcp":"Static"},{
+"mac_addr":"aa:bb:cc:dd:ee:02","ipv4_addr":"192.168.1.247","hostname":"Vermilion","dhcp":"DHCP"},{
+"mac_addr":"aa:bb:cc:dd:ee:03","ipv4_addr":"192.168.1.100","hostname":"Celadon","dhcp":"Static"}]},{
+"port":"LAN 2","device_list":[
+]},{
+"port":"LAN 3","device_list":[
+]},{
+"port":"LAN 4","device_list":[
+]},{
+"port":"2.4GHz AP 1","device_list":[
+{
+"mac_addr":"aa:bb:cc:dd:ee:04","ipv4_addr":"192.168.1.131","hostname":"Chartreuse","dhcp":"DHCP"},{
+"mac_addr":"aa:bb:cc:dd:ee:05","ipv4_addr":"192.168.1.150","hostname":"Amaranth","dhcp":"Static"}]},{
+"port":"2.4GHz AP 2","device_list":[
+]},{
+"port":"2.4GHz AP 3","device_list":[
+]},{
+"port":"2.4GHz AP 4","device_list":[
+]},{
+"port":"5GHz AP 1","device_list":[
+{
+"mac_addr":"aa:bb:cc:dd:ee:06","ipv4_addr":"192.168.1.239","hostname":"Periwinkle","dhcp":"DHCP"},{
+"mac_addr":"aa:bb:cc:dd:ee:07","ipv4_addr":"192.168.1.132","hostname":"Obsidian","dhcp":"DHCP"},{
+"mac_addr":"aa:bb:cc:dd:ee:08","ipv4_addr":"192.168.1.122","hostname":"Alabaster","dhcp":"DHCP"}]},{
+"port":"5GHz AP 2","device_list":[
+]},{
+"port":"5GHz AP 3","device_list":[
+]},{
+"port":"5GHz AP 4","device_list":[
+]},{
+"port":"WDS RBS","device_list":[
+]}]}],"EoO" : "0" },"EoO" : "0" }
