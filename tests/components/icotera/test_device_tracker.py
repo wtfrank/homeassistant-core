@@ -1,7 +1,5 @@
 """Tests for the Icotera device tracker."""
 
-from unittest.mock import patch
-
 from homeassistant.components.icotera.const import DOMAIN
 from homeassistant.const import STATE_HOME, STATE_NOT_HOME
 from homeassistant.core import HomeAssistant
@@ -21,10 +19,10 @@ async def test_device_tracker(
     # Pre-register entities to ensure they are enabled
     registry = er.async_get(hass)
     entity_id1 = registry.async_get_or_create(
-        "device_tracker", DOMAIN, "00:11:22:33:44:55"
+        "device_tracker", DOMAIN, "aa:bb:cc:dd:ee:01"
     ).entity_id
     entity_id2 = registry.async_get_or_create(
-        "device_tracker", DOMAIN, "66:77:88:99:aa:bb"
+        "device_tracker", DOMAIN, "aa:bb:cc:dd:ee:02"
     ).entity_id
 
     await hass.config_entries.async_setup(mock_config_entry.entry_id)
@@ -33,20 +31,22 @@ async def test_device_tracker(
     state1 = hass.states.get(entity_id1)
     assert state1
     assert state1.state == STATE_HOME
-    assert state1.attributes["ip"] == "192.168.1.10"
-    assert state1.attributes["mac"] == "00:11:22:33:44:55"
+    assert state1.attributes["ip"] == "192.168.1.112"
+    assert state1.attributes["mac"] == "aa:bb:cc:dd:ee:01"
+    assert state1.name == "Cerulean"
 
     state2 = hass.states.get(entity_id2)
     assert state2
     assert state2.state == STATE_HOME
-    assert state2.attributes["ip"] == "192.168.1.11"
-    assert state2.attributes["mac"] == "66:77:88:99:aa:bb"
+    assert state2.attributes["ip"] == "192.168.1.247"
+    assert state2.attributes["mac"] == "aa:bb:cc:dd:ee:02"
+    assert state2.name == "Vermilion"
 
     # Test device removed
     mock_icotera_client.get_connected_devices.return_value = {
-        "00:11:22:33:44:55": {
-            "hostname": "device1",
-            "ipv4_address": "192.168.1.10",
+        "aa:bb:cc:dd:ee:01": {
+            "hostname": "Cerulean",
+            "ipv4_address": "192.168.1.112",
         },
     }
 

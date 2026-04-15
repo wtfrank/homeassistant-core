@@ -1,14 +1,16 @@
 """Common fixtures for the Icotera tests."""
 
 from collections.abc import Generator
+import json
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from homeassistant.components.icotera.api import IcoteraApiClient
 from homeassistant.components.icotera.const import DOMAIN
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 
-from tests.common import MockConfigEntry
+from tests.common import MockConfigEntry, load_fixture
 
 
 @pytest.fixture
@@ -42,14 +44,10 @@ def mock_icotera_client() -> Generator[AsyncMock]:
     ) as mock_client:
         client = mock_client.return_value
         client.login.return_value = True
-        client.get_connected_devices.return_value = {
-            "00:11:22:33:44:55": {
-                "hostname": "device1",
-                "ipv4_address": "192.168.1.10",
-            },
-            "66:77:88:99:aa:bb": {
-                "hostname": "device2",
-                "ipv4_address": "192.168.1.11",
-            },
-        }
+
+        # Load fixture data and parse it using the production parsing logic
+        content = load_fixture("i4850-31/connected_devices.json", "icotera")
+        data = json.loads(content)
+        client.get_connected_devices.return_value = IcoteraApiClient._parse_devices(data)
+
         yield client

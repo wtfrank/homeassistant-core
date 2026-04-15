@@ -158,7 +158,8 @@ class IcoteraApiClient:
             self._is_logged_in = False
             raise IcoteraConnectionError from err
 
-    def _parse_devices(self, data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    @staticmethod
+    def _parse_devices(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
         """Parse the router's device response."""
         devices_dict: dict[str, dict[str, Any]] = {}
         info_array = data.get("resp_body", {}).get("info_array", [])
