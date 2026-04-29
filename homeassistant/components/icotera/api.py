@@ -57,7 +57,7 @@ class IcoteraApiClient:
                 _LOGGER.debug(
                     "Initial request sent: %s\nHeaders: %s\nResponse: %s",
                     initial_payload,
-                    response.request_info.headers,
+                    getattr(response, "request_info", type("Mock", (), {"headers": "N/A"})).headers,
                     response.headers,
                 )
                 response.raise_for_status()
@@ -73,7 +73,7 @@ class IcoteraApiClient:
                     _LOGGER.debug(
                         "Login request sent: username=%s\nHeaders: %s\nResponse: %s\nCookies: %s",
                         self._username,
-                        response.request_info.headers,
+                        getattr(response, "request_info", type("Mock", (), {"headers": "N/A"})).headers,
                         response.headers,
                         self._session.cookie_jar.filter_cookies(self._url),
                     )
@@ -135,7 +135,7 @@ class IcoteraApiClient:
                     _LOGGER.debug(
                         "Device fetch request sent: %s\nHeaders: %s\nResponse: %s\nCookies: %s",
                         devices_payload,
-                        response.request_info.headers,
+                        getattr(response, "request_info", type("Mock", (), {"headers": "N/A"})).headers,
                         response.headers,
                         self._session.cookie_jar.filter_cookies(self._url),
                     )
