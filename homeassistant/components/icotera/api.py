@@ -41,6 +41,7 @@ class IcoteraApiClient:
 
     async def login(self) -> bool:
         """Log in to the router."""
+        self._session.cookie_jar.clear()
         headers = {
             "Content-Type": "text/plain;charset=UTF-8",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
@@ -113,7 +114,7 @@ class IcoteraApiClient:
         else:
             return True
 
-    async def get_connected_devices(self) -> dict[str, dict[str, Any]]:
+    async def get_connected_devices(self, retry: bool = True) -> dict[str, dict[str, Any]]:
         """Get connected devices from the router."""
         if not self._is_logged_in:
             await self.login()
@@ -142,12 +143,24 @@ class IcoteraApiClient:
                 response.raise_for_status()
                 content_type = response.headers.get("Content-Type", "")
                 if "text/html" in content_type:
-                    _LOGGER.debug("Session lost, re-authenticating")
-                    self._is_logged_in = False
-                    return await self.get_connected_devices()
+                    if retry:
+                        _LOGGER.debug("Session lost (HTML redirect), re-authenticating")
+                        self._session.cookie_jar.clear()
+                        self._is_logged_in = False
+                        return await self.get_connected_devices(retry=False)
+                    raise IcoteraConnectionError("Session lost and re-login failed")
 
                 data = await response.json()
                 _LOGGER.debug("Device fetch response: %s", data)
+
+                if data.get("resp_t") == "error":
+                    if retry:
+                        _LOGGER.debug("Session lost (JSON error), re-authenticating: %s", data)
+                        self._session.cookie_jar.clear()
+                        self._is_logged_in = False
+                        return await self.get_connected_devices(retry=False)
+                    raise IcoteraConnectionError(f"Router returned error after re-login: {data}")
+
                 return self._parse_devices(data)
         except ClientResponseError as err:
             _LOGGER.error("HTTP error fetching devices: %s", err)
